@@ -1,13 +1,17 @@
+import copy
+
+
 class Solver:
     def __init__(self, grid):
         self.grid = grid
         self.domains = self.get_domains()
         self.neighbors = self.gen_neighbors()
+        self.lines = []
 
     def solve(self):
         if not self.arc_consistency_check():
             return False
-        # <---- update grid here
+        self.update_grid()
         return self.backtrack()
 
     def select_MRV(self):
@@ -64,24 +68,34 @@ class Solver:
         Dj = self.domains[rowj][colj]
         for x in Di:
             if len(Dj) == 1 and x in Dj:
+                s = 'D'+str(Xi)+'_old ' + str(Di)
                 self.domains[Xi[0]][Xi[1]].remove(x)
+                s += '  D'+str(Xi)+'_new '+ str(self.domains[Xi[0]][Xi[1]])+ '   D'+str(Xj)+' '+ str(Dj)+ '\n'
+                self.lines.append(s)
                 revised = True
         return revised
 
 
-        
+    def update_grid(self):
+        for row in range(9):
+            for col in range(9):
+                if len(self.domains[row][col]) == 1:
+                    self.grid[row][col] = self.domains[row][col][0]
 
     def backtrack(self):
         if self.complete_check():
             return True
         vrow, vcol = var = self.select_MRV()
+        backup_grid = copy.deepcopy(self.grid)
+        backup_domain = copy.deepcopy(self.domains)
         for assigned_value in self.get_LCV(var):
             self.grid[vrow][vcol] = assigned_value
             if self.arc_consistency_check():
-                # <---- update grid here
+                self.update_grid()
                 if self.backtrack():
                     return True
-            self.grid[vrow][vcol] = 0
+            self.grid = backup_grid
+            self.domains = backup_domain
         return False
 
     
@@ -95,6 +109,7 @@ class Solver:
                 if self.grid[row][col] != 0:
                     res[row][col] = [self.grid[row][col]]
         return res
+
     def gen_neighbors(self):
         res = [[0 for _ in range(9)]for i in range(9)]
         for row in range(9):
@@ -140,6 +155,8 @@ grid2 = [
 ]
 solver = Solver(grid)
 print(solver.solve())
+with open('arc.txt', 'w') as file:
+    file.writelines(solver.lines)
 mat= solver.grid
 for row in mat:
     print(row)
