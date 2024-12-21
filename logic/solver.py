@@ -1,4 +1,5 @@
 import copy
+from collections import deque
 
 
 class Solver:
@@ -41,22 +42,23 @@ class Solver:
         return sorted(self.domains[row][col], key=lcv_score)
 
     def arc_consistency_check(self):
-        q = []
+        # Initialize the queue with all arcs
+        q = deque()
         for i in range(9):
             for j in range(9):
-                if self.grid[i][j] == 0:
-                    for k, l in self.neighbors[i][j]:
-                        if self.grid[i][j] == 0:
-                            q.append([(i,j), (k, l)])
+                if self.grid[i][j] == 0:  # Only consider empty cells
+                    for neighbor in self.neighbors[i][j]:
+                        q.append(((i, j), neighbor))
         
         while q:
-            Xi, Xj = q.pop(0)
-            if self.revise(Xi, Xj):
+            Xi, Xj = q.popleft()
+            if self.revise(Xi, Xj):  # Revise the domain of Xi based on Xj
                 rowi, coli = Xi
-                if len(self.domains[rowi][coli]) == 0:
+                if len(self.domains[rowi][coli]) == 0:  # Domain of Xi is empty
                     return False
+                # Re-enqueue all arcs (Xk, Xi) where Xk is a neighbor of Xi and not Xj
                 for Xk in self.neighbors[rowi][coli]:
-                    if Xk != Xj :
+                    if Xk != Xj:
                         q.append((Xk, Xi))
         return True
 
@@ -66,13 +68,18 @@ class Solver:
         rowj, colj = Xj
         Di = self.domains[rowi][coli]
         Dj = self.domains[rowj][colj]
+        
+        to_remove = []
         for x in Di:
-            if len(Dj) == 1 and x in Dj:
-                s = 'D'+str(Xi)+'_old ' + str(Di)
-                self.domains[Xi[0]][Xi[1]].remove(x)
-                s += '  D'+str(Xi)+'_new '+ str(self.domains[Xi[0]][Xi[1]])+ '   D'+str(Xj)+' '+ str(Dj)+ '\n'
-                self.lines.append(s)
-                revised = True
+            # Check if there exists no value in Dj that satisfies the constraint
+            if not any(x != y for y in Dj):  # For Sudoku, values must differ
+                to_remove.append(x)
+        
+        # Remove invalid values from the domain of Xi
+        for x in to_remove:
+            self.domains[rowi][coli].remove(x)
+            revised = True
+        
         return revised
 
 
