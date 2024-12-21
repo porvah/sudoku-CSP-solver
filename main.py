@@ -1,5 +1,6 @@
 
 from logic.problemMaker import problemMaker
+from logic.solver import Solver
 
 grid_no_solution = [
     [5, 1, 6, 8, 4, 9, 7, 3, 2],
@@ -47,8 +48,10 @@ grid2 = [
 ]
 
 maker = problemMaker()
-maker.grid = grid2
+maker.grid = grid_multiple_solutions
 maker.domains = maker.get_domains()
 maker.neighbors = maker.gen_neighbors()
 print(maker.generative_backtrack()) 
 #print(maker.lines)
+# solver = Solver(grid_multiple_solutions)
+# print(solver.solve())

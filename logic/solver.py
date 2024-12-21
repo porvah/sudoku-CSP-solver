@@ -35,8 +35,9 @@ class Solver:
             score = 0
             for neighbor in neighbors:
                 neighbor_row, neighbor_col = neighbor
-                if value in self.domains[neighbor_row][neighbor_col]:
-                    score += 1
+                if self.grid[neighbor_row][neighbor_col] == 0:
+                    if value in self.domains[neighbor_row][neighbor_col]:
+                        score += 1
             return score
 
         return sorted(self.domains[row][col], key=lcv_score)
@@ -122,19 +123,20 @@ class Solver:
         for row in range(9):
             for col in range(9):
                 neighbors = []
-                for i in range(9):
-                    if i != col:
-                        neighbors.append((row, i))
-                    if i != row:
-                        neighbors.append((i, col))
+                if self.grid[row][col] == 0:
+                    for i in range(9):
+                        if i != col:
+                            neighbors.append((row, i))
+                        if i != row:
+                            neighbors.append((i, col))
 
-                subgrid_row_start = (row // 3) * 3
-                subgrid_col_start = (col // 3) * 3
+                    subgrid_row_start = (row // 3) * 3
+                    subgrid_col_start = (col // 3) * 3
 
-                for r in range(subgrid_row_start, subgrid_row_start + 3):
-                    for c in range(subgrid_col_start, subgrid_col_start + 3):
-                        if (r, c) != (row, col):
-                            neighbors.append((r, c))
+                    for r in range(subgrid_row_start, subgrid_row_start + 3):
+                        for c in range(subgrid_col_start, subgrid_col_start + 3):
+                            if (r, c) != (row, col):
+                                neighbors.append((r, c))
                 res[row][col] = neighbors
         return res
 
