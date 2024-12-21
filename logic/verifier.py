@@ -9,7 +9,6 @@ class SudokuVerifier(Solver):
         empty = self.select_MRV() 
         if not empty:
             self.solutions += 1
-            # Stop searching if more than one solution is found
             return self.solutions < 2
 
         vrow, vcol = empty
@@ -18,18 +17,15 @@ class SudokuVerifier(Solver):
         for value in self.get_LCV((vrow, vcol)):
             self.grid[vrow][vcol] = value
             domain_backup.remove(value)
-            # Propagate constraints
             if self.arc_consistency_check():
                 if not self.solve_for_verification():
                     return False
-            # Restore grid state
             self.grid[vrow][vcol] = 0
             self.domains[vrow][vcol] = domain_backup
 
         return self.solutions < 2
 
     def solve(self):
-        # Perform arc consistency
         if not self.arc_consistency_check():
             return False
 
