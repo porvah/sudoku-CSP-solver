@@ -1,5 +1,4 @@
 import copy
-from collections import deque
 
 
 class Solver:
@@ -35,29 +34,29 @@ class Solver:
             score = 0
             for neighbor in neighbors:
                 neighbor_row, neighbor_col = neighbor
-                if self.grid[neighbor_row][neighbor_col] == 0:
-                    if value in self.domains[neighbor_row][neighbor_col]:
-                        score += 1
+                if value in self.domains[neighbor_row][neighbor_col]:
+                    score += 1
             return score
 
         return sorted(self.domains[row][col], key=lcv_score)
 
     def arc_consistency_check(self):
-        q = deque()
+        q = []
         for i in range(9):
             for j in range(9):
-                if self.grid[i][j] == 0: 
-                    for neighbor in self.neighbors[i][j]:
-                        q.append(((i, j), neighbor))
+                if self.grid[i][j] == 0:
+                    for k, l in self.neighbors[i][j]:
+                        if self.grid[i][j] == 0:
+                            q.append([(i,j), (k, l)])
         
         while q:
-            Xi, Xj = q.popleft()
-            if self.revise(Xi, Xj):  
+            Xi, Xj = q.pop(0)
+            if self.revise(Xi, Xj):
                 rowi, coli = Xi
-                if len(self.domains[rowi][coli]) == 0:  
+                if len(self.domains[rowi][coli]) == 0:
                     return False
                 for Xk in self.neighbors[rowi][coli]:
-                    if Xk != Xj:
+                    if Xk != Xj and self.grid[Xk[0]][Xk[1]] != 0:
                         q.append((Xk, Xi))
         return True
 
@@ -67,16 +66,13 @@ class Solver:
         rowj, colj = Xj
         Di = self.domains[rowi][coli]
         Dj = self.domains[rowj][colj]
-        
-        to_remove = []
         for x in Di:
-            if not any(x != y for y in Dj):  
-                to_remove.append(x)
-        
-        for x in to_remove:
-            self.domains[rowi][coli].remove(x)
-            revised = True
-        
+            if len(Dj) == 1 and x in Dj:
+                s = 'D'+str(Xi)+'_old ' + str(Di)
+                self.domains[Xi[0]][Xi[1]].remove(x)
+                s += '  D'+str(Xi)+'_new '+ str(self.domains[Xi[0]][Xi[1]])+ '   D'+str(Xj)+' '+ str(Dj)+ '\n'
+                self.lines.append(s)
+                revised = True
         return revised
 
 
@@ -119,20 +115,19 @@ class Solver:
         for row in range(9):
             for col in range(9):
                 neighbors = []
-                if self.grid[row][col] == 0:
-                    for i in range(9):
-                        if i != col:
-                            neighbors.append((row, i))
-                        if i != row:
-                            neighbors.append((i, col))
+                for i in range(9):
+                    if i != col:
+                        neighbors.append((row, i))
+                    if i != row:
+                        neighbors.append((i, col))
 
-                    subgrid_row_start = (row // 3) * 3
-                    subgrid_col_start = (col // 3) * 3
+                subgrid_row_start = (row // 3) * 3
+                subgrid_col_start = (col // 3) * 3
 
-                    for r in range(subgrid_row_start, subgrid_row_start + 3):
-                        for c in range(subgrid_col_start, subgrid_col_start + 3):
-                            if (r, c) != (row, col):
-                                neighbors.append((r, c))
+                for r in range(subgrid_row_start, subgrid_row_start + 3):
+                    for c in range(subgrid_col_start, subgrid_col_start + 3):
+                        if (r, c) != (row, col):
+                            neighbors.append((r, c))
                 res[row][col] = neighbors
         return res
 
@@ -158,6 +153,7 @@ grid2 = [
     [8, 9, 3, 8, 5, 3, 1, 8, 8],
     [3, 4, 7, 4, 5, 0, 8, 2, 5]
 ]
+
 # solver = Solver(grid)
 # print(solver.solve())
 # with open('arc.txt', 'w') as file:
@@ -165,4 +161,4 @@ grid2 = [
 # mat= solver.grid
 # for row in mat:
 #     print(row)
-# print(solver.get_LCV((0,2)))
+# # print(solver.get_LCV((0,2)))

@@ -1,1 +1,2 @@
-generative_backtrack()
+for row in puzzle:
+#     print(row)
