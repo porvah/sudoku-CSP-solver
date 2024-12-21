@@ -56,7 +56,7 @@ class Solver:
                 if len(self.domains[rowi][coli]) == 0:
                     return False
                 for Xk in self.neighbors[rowi][coli]:
-                    if Xk != Xj and self.grid[Xk[0]][Xk[1]] != 0:
+                    if Xk != Xj :
                         q.append((Xk, Xi))
         return True
 
