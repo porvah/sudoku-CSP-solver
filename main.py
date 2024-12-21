@@ -1,6 +1,8 @@
 
-from logic.problemMaker import problemMaker
+from logic.difficulty import Difficulty
+from logic.generator import SudokuGenerator
 from logic.solver import Solver
+from logic.verifier import SudokuVerifier
 
 grid_no_solution = [
     [5, 1, 6, 8, 4, 9, 7, 3, 2],
@@ -47,11 +49,23 @@ grid2 = [
     [3, 4, 5, 2, 8, 6, 1, 7, 9]
 ]
 
-maker = problemMaker()
-maker.grid = grid_multiple_solutions
-maker.domains = maker.get_domains()
-maker.neighbors = maker.gen_neighbors()
-print(maker.generative_backtrack()) 
+# maker = problemMaker()
+# maker.grid = grid_multiple_solutions
+# maker.domains = maker.get_domains()
+# maker.neighbors = maker.gen_neighbors()
+# print(maker.generative_backtrack()) 
 #print(maker.lines)
 # solver = Solver(grid_multiple_solutions)
 # print(solver.solve())
+
+# Generate a puzzle
+generator = SudokuGenerator()
+puzzle = generator.make_puzzle(Difficulty.EASY)
+
+# Print the generated puzzle
+for row in puzzle:
+    print(row)
+
+# verifier = SudokuVerifier(grid_unique_solution)
+# verifier.solve()
+# print(verifier.solutions)
