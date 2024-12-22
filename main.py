@@ -3,6 +3,9 @@ from logic.difficulty import Difficulty
 from logic.generator import SudokuGenerator
 from logic.solver import Solver
 
+from gui import Gui
+app = Gui() 
+app.mainloop()
 grid_no_solution = [
     [5, 1, 6, 8, 4, 9, 7, 3, 2],
     [3, 0, 7, 6, 0, 5, 0, 0, 0],
@@ -77,3 +80,12 @@ for row1 in grid:
 # verifier = SudokuVerifier(grid_unique_solution)
 # verifier.solve()
 # print(verifier.solutions)
+
+
+# first mode: AI generate, player play and display message with each move
+# second mode: AI generate, AI play (finish the game immediately)
+# third mode: player generate, AI play (finish the game immediately)
+# 
+# 
+# 
+# 

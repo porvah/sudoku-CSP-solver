@@ -15,6 +15,7 @@ class SudokuGenerator(Solver):
         return self.grid
 
     def generate_puzzle(self, difficulty=Difficulty.MED):
+        print(difficulty)
         # Generate complete board
         self.fill_grid()
 
