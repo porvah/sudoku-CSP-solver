@@ -40,4 +40,13 @@ class SudokuGenerator(Solver):
                 clues_to_remove -= 1
 
         return self.grid
+    
+    # check if the user input is valid
+    def is_valid_input(self ,board):
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] != self.saved_grid[i][j]:
+                    return False
+        return True
+
 
