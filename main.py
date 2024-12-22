@@ -2,7 +2,6 @@
 from logic.difficulty import Difficulty
 from logic.generator import SudokuGenerator
 from logic.solver import Solver
-from logic.verifier import SudokuVerifier
 
 grid_no_solution = [
     [5, 1, 6, 8, 4, 9, 7, 3, 2],
@@ -61,11 +60,16 @@ grid2 = [
 # Generate a puzzle
 generator = SudokuGenerator()
 puzzle = generator.generate_puzzle(Difficulty.HARD)
+grid = generator.saved_grid
 
 # Print the generated puzzle
 for row in puzzle:
     print(row)
 
+print()
+
+for row1 in grid:
+    print(row1)
 # solver = Solver(grid_multiple_solutions)
 # print(solver.solve())
 # print(solver.grid)

@@ -1,4 +1,4 @@
 class Difficulty:
-    EASY = 81//2
-    MED = 81//3
-    HARD = 81//5
+    EASY = 45
+    MED = 30
+    HARD = 20
