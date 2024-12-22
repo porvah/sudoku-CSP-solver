@@ -7,11 +7,15 @@ class Solver:
         self.grid = grid
         self.domains = self.initialize_domains()
         self.neighbors = self.generate_neighbors()
+        self.lines = []
 
     def solve(self):
         if not self.arc_consistency_check():
             return False
-        return self.backtrack()
+        value = self.backtrack()
+        with open("arc.txt", "w") as f:
+            f.writelines(self.lines)
+        return value
 
     def initialize_domains(self):
         # Initialize domains with possible values (1-9) and reduce based on constraints
@@ -83,7 +87,12 @@ class Solver:
 
         for value in domain_Xi[:]:  # Iterate over a copy
             if not any(value != neighbor_value for neighbor_value in domain_Xj):
+                s = ''
+                s += 'D_old'+str((xi_row, xi_col))+str(domain_Xi)+'  '
                 domain_Xi.remove(value)
+                s += 'D_new'+str((xi_row, xi_col))+str(domain_Xi)+'  '
+                s += 'D'+str((xj_row, xj_col))+str(domain_Xj)+'\n'
+                self.lines.append(s)
                 revised = True
         return revised
 
