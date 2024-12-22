@@ -12,9 +12,10 @@ class Solver:
     def solve(self):
         if not self.arc_consistency_check():
             return False
+        value = self.backtrack()
         with open("arc.txt", "w") as f:
-            f.write(self.lines)
-        return self.backtrack()
+            f.writelines(self.lines)
+        return value
 
     def initialize_domains(self):
         # Initialize domains with possible values (1-9) and reduce based on constraints

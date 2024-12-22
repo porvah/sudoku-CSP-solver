@@ -58,21 +58,21 @@ grid2 = [
 # print(solver.solve())
 
 # Generate a puzzle
-# generator = SudokuGenerator()
-# puzzle = generator.generate_puzzle(Difficulty.HARD)
-# grid = generator.saved_grid
+generator = SudokuGenerator()
+puzzle = generator.generate_puzzle(Difficulty.HARD)
+grid = generator.saved_grid
 
 # Print the generated puzzle
-# for row in puzzle:
-#     print(row)
+for row in puzzle:
+    print(row)
 
-# print()
+print()
 
-# for row1 in grid:
-#     print(row1)
-solver = Solver(grid_multiple_solutions)
-print(solver.solve())
-print(solver.grid)
+for row1 in grid:
+    print(row1)
+# solver = Solver(grid_multiple_solutions)
+# print(solver.solve())
+# print(solver.grid)
 
 # verifier = SudokuVerifier(grid_unique_solution)
 # verifier.solve()
