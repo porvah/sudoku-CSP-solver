@@ -98,6 +98,15 @@ class Gui(ctk.CTk):
         self.ai_solve_button.grid(row=3, column=0, pady=10, padx=(400, 10), sticky="w")
 
 
+        # Add Clear Button
+        self.clear_button = ctk.CTkButton(
+            self.main_frame,
+            text="Clear",
+            command=self.clear_board
+        )
+        self.clear_button.grid(row=5, column=0, pady=10, padx=(10, 10), sticky="w")
+
+
         # Sudoku Grid
         self.grid_frame = ctk.CTkFrame(self.main_frame)
         self.grid_frame.grid(row=4, column=0, pady=20, padx=10, sticky="w")
@@ -125,6 +134,7 @@ class Gui(ctk.CTk):
         self.text_area = ctk.CTkTextbox(self.main_frame, width=500, height=680, font=("Arial", 14))
         self.text_area.grid(row=1, column=1, rowspan=4, padx=(20, 10), pady=10, sticky="nsew")
         self.text_area.configure(state="disabled")
+        
         
         self._update_grid()
         self._update_status("Welcome to Sudoku! Select a mode to begin.")
@@ -250,3 +260,28 @@ class Gui(ctk.CTk):
         self.text_area.insert("end", f"\n{message}")
         self.text_area.see("end")
         self.text_area.configure(state="disabled")
+    def clear_board(self):
+        # Reset the internal board
+        self.board = [[0 for _ in range(9)] for _ in range(9)]
+        self.original_board = None
+        self.player_creating = False
+        self.player_solving = False
+
+        # Reset the grid cells
+        self._update_grid()
+
+        # Reset dropdowns and radio buttons
+        self.solve_mode_var.set("none")
+        self.create_mode_var.set("none")
+        self.difficulty_var.set("Medium")
+
+        # Clear the status text area
+        self.text_area.configure(state="normal")
+        self.text_area.delete("1.0", "end")
+        self.text_area.configure(state="disabled")
+
+        # Disable AI Solve button
+        self.ai_solve_button.configure(state="disabled")
+
+        # Update status
+        self._update_status("Board cleared! Select a mode to start fresh.")
