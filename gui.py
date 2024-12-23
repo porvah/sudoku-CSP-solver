@@ -1,5 +1,6 @@
 import copy
 import random
+import time
 import customtkinter as ctk
 from logic.difficulty import Difficulty
 from logic.generator import SudokuGenerator
@@ -144,6 +145,7 @@ class Gui(ctk.CTk):
         if mode == "ai":
             self.player_solving = False
             if self.original_board:
+                start = time.time()
                 solver = Solver(self.original_board)
                 if solver.solve():
                     self.board = solver.grid
@@ -151,6 +153,8 @@ class Gui(ctk.CTk):
                     self._update_status("AI has solved the puzzle!")
                 else:
                     self._update_status("This puzzle cannot be solved!")
+                duration = time.time() - start
+                self._update_status(f"Time taken: {duration:.2f} seconds")
         elif mode == "player":
             self.player_solving = True
             self._update_status("Player solving mode activated. Enter numbers and press Enter to validate.")
@@ -171,10 +175,13 @@ class Gui(ctk.CTk):
         if mode == "AI Creating":
             self.player_creating = False
             difficulty = self.get_difficulty_level()
+            start = time.time()
             self.board = self.generator.generate_puzzle(difficulty)
             self.original_board = copy.deepcopy(self.board)
             self._update_grid()
             self._update_status(f"AI has created a new {self.difficulty_var.get()} puzzle. Select solving mode to continue.")
+            duration = time.time() - start
+            self._update_status(f"Time taken: {duration:.2f} seconds")
             self.ai_solve_button.configure(state="disabled")
         elif mode == "Player Creating":
             self.player_creating = True
