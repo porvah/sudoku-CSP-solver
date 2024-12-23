@@ -1,5 +1,6 @@
 import copy
 import random
+from logic.grid_verifier import GridVerifier
 from logic.solver import Solver
 from logic.difficulty import Difficulty
 
@@ -9,36 +10,33 @@ class SudokuGenerator(Solver):
         self.saved_grid = None
 
     def fill_grid(self):
-        if not self.solve():
+        if not self.backtrack():
             raise ValueError("Failed to generate a complete Sudoku grid.")
         self.saved_grid = copy.deepcopy(self.grid)
+        print(self.grid)
         return self.grid
 
-    def generate_puzzle(self, difficulty=Difficulty.MED):
-        print(difficulty)
-        # Generate complete board
-        self.fill_grid()
+    def has_unique_solution(self):
+        verifier = GridVerifier(copy.deepcopy(self.grid))
 
-        # remove cells randomly
+        return verifier.solve() and verifier.solutions == 1
+
+    def generate_puzzle(self, difficulty=Difficulty.MED):
+        self.fill_grid()
         cells = [(r, c) for r in range(9) for c in range(9)]
         random.shuffle(cells)
-        clues_to_remove = 81 - difficulty
-
+        clues_to_remove = 81- difficulty
         for row, col in cells:
             if clues_to_remove <= 0:
                 break
 
-            # Backup the current cell
             backup = self.grid[row][col]
             self.grid[row][col] = 0
-
-            # Check if the board is solvable
-            solver = Solver(copy.deepcopy(self.grid))
-            if not solver.solve():
-                # Restore the cell 
-                self.grid[row][col] = backup
+            if not self.has_unique_solution():
+                self.grid[row][col] = backup  
             else:
                 clues_to_remove -= 1
+
 
         return self.grid
     

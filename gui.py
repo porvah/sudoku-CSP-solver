@@ -4,7 +4,7 @@ import customtkinter as ctk
 from logic.difficulty import Difficulty
 from logic.generator import SudokuGenerator
 from logic.solver import Solver
-from logic.grid_verifier import gridVerifier
+from logic.grid_verifier import GridVerifier
 
 class Gui(ctk.CTk):
     def setup(self):
@@ -231,8 +231,8 @@ class Gui(ctk.CTk):
             print("Current board state:")
             for row in self.board:
                 print(row)
-            
-            if gridVerifier.verify_grid(self.board):
+            gridVerifier = GridVerifier(copy.deepcopy(self.board))
+            if gridVerifier.verify_grid():
                 solver = Solver(self.board)
                 if solver.solve():
                     self.board = solver.grid
@@ -241,7 +241,7 @@ class Gui(ctk.CTk):
                 else:
                     self._update_status("This puzzle cannot be solved!")
             else:
-                self._update_status("Invalid puzzle! Ensure you have at least 17 clues and the puzzle is valid.")
+                self._update_status("Invalid puzzle! please enter a puzzle with a unique solution")
 
     def on_cell_focus_out(self, row, col):
         if not self.grid_cells[row][col].get() and self.board[row][col] != 0:
