@@ -176,6 +176,7 @@ class Gui(ctk.CTk):
             self.player_creating = False
             difficulty = self.get_difficulty_level()
             start = time.time()
+            self.generator = SudokuGenerator()
             self.board = self.generator.generate_puzzle(difficulty)
             self.original_board = copy.deepcopy(self.board)
             self._update_grid()
