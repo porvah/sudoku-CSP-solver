@@ -1,5 +1,6 @@
 from collections import deque
 import copy
+import random
 
 
 class Solver:
@@ -96,11 +97,11 @@ class Solver:
                 revised = True
         return revised
 
-    def backtrack(self):
+    def backtrack(self , rand = False):
         if self.is_complete():
             return True
         
-        var = self.select_MRV()
+        var = self.select_MRV(rand)
         if var is None:
             return False
         row, col = var
@@ -117,7 +118,17 @@ class Solver:
     def is_complete(self):
         return all(self.grid[row][col] != 0 for row in range(9) for col in range(9))
 
-    def select_MRV(self):
+    def select_MRV(self , rand = False):
+        if rand:
+            row_val = random.randint(0, 8)
+            col_val = random.randint(0, 8)
+            
+            while self.grid[row_val][col_val] != 0:
+                row_val = random.randint(0, 8)
+                col_val = random.randint(0, 8)
+            selected = (row_val , col_val)
+            return selected
+        
         min_domain = float('inf')
         selected_var = None
         for row in range(9):

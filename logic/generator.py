@@ -10,7 +10,7 @@ class SudokuGenerator(Solver):
         self.saved_grid = None
 
     def fill_grid(self):
-        if not self.backtrack():
+        if not self.backtrack(rand = True):
             raise ValueError("Failed to generate a complete Sudoku grid.")
         self.saved_grid = copy.deepcopy(self.grid)
         print(self.grid)
