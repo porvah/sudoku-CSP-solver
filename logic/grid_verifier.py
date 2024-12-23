@@ -5,6 +5,8 @@ class GridVerifier(Solver):
         self.solutions = 0
         super().__init__(grid)
 
+    # performs backtracking but stopping when 2 solutions are found instead of 1
+    # this helps identify whether the generated grid has unique and valid solution or not
     def verify_grid(self):
         empty = self.select_MRV() 
         if not empty:

@@ -10,6 +10,8 @@ class Solver:
         self.neighbors = self.generate_neighbors()
         self.lines = []
 
+
+    # performing arc consistency before backtracking to reduce domains
     def solve(self):
         if not self.arc_consistency_check():
             return False
@@ -18,13 +20,12 @@ class Solver:
             f.writelines(self.lines)
         return value
 
+    # filling the domains matrix
     def initialize_domains(self):
-        # Initialize domains with possible values (1-9) and reduce based on constraints
         domains = [[[i for i in range(1, 10)] for _ in range(9)] for _ in range(9)]
         for row in range(9):
             for col in range(9):
                 if self.grid[row][col] != 0:
-                    # Cell is pre-filled; set domain to its value and propagate constraints
                     domains[row][col] = [self.grid[row][col]]
                     for neighbor in self.get_neighbors(row, col):
                         if self.grid[neighbor[0]][neighbor[1]] == 0:
@@ -34,16 +35,16 @@ class Solver:
                                 pass
         return domains
 
+    # stores neighbors for each cell
     def generate_neighbors(self):
-        # Precompute neighbors for each cell
         neighbors = [[[] for _ in range(9)] for _ in range(9)]
         for row in range(9):
             for col in range(9):
                 neighbors[row][col] = self.get_neighbors(row, col)
         return neighbors
 
+    # gets the neighbors of a cell
     def get_neighbors(self, row, col):
-        # Find all neighbors of a cell in its row, column, and 3x3 subgrid
         neighbors = set()
         for i in range(9):
             if i != col:
@@ -59,6 +60,7 @@ class Solver:
                     neighbors.add((r, c))
         return list(neighbors)
 
+    # performs arc consistency
     def arc_consistency_check(self):
         queue = deque()
         for row in range(9):
@@ -77,7 +79,7 @@ class Solver:
                     if Xk != Xj:
                         queue.append((Xk, Xi))
         return True
-
+    # arc consistency revise
     def revise(self, Xi, Xj):
         revised = False
         xi_row, xi_col = Xi
@@ -97,11 +99,12 @@ class Solver:
                 revised = True
         return revised
 
+    # performs backtracking on the stored self.grid
     def backtrack(self , rand = False):
         if self.is_complete():
             return True
         
-        var = self.select_MRV(rand)
+        var = self.select_MRV(rand) # the rand parameter is used to choose whether or not to get a random variable or to use mrv
         if var is None:
             return False
         row, col = var
@@ -115,11 +118,13 @@ class Solver:
             self.domains = backup_domains
         return False
 
+    # check for board completion
     def is_complete(self):
         return all(self.grid[row][col] != 0 for row in range(9) for col in range(9))
 
+    # selects the mrv by iterating through the domains of the cells and selecting the valid cell with the least domain size
     def select_MRV(self , rand = False):
-        if rand:
+        if rand: # selects a random valid cell instead (used in generation)
             row_val = random.randint(0, 8)
             col_val = random.randint(0, 8)
             
@@ -138,6 +143,7 @@ class Solver:
                     min_domain = len(self.domains[row][col])
         return selected_var
 
+    # select the least constrainig value by getting selecting the value that least affects its neighbors domains
     def get_LCV(self, var):
         row, col = var
         neighbors = self.neighbors[row][col]

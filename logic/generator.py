@@ -9,18 +9,22 @@ class SudokuGenerator(Solver):
         super().__init__([[0 for _ in range(9)] for _ in range(9)])
         self.saved_grid = None
 
+    # performs backtracking to get a valid solution
     def fill_grid(self):
-        if not self.backtrack(rand = True):
+        if not self.backtrack(rand = True): # rand=true to get new puzzle solution each time
             raise ValueError("Failed to generate a complete Sudoku grid.")
         self.saved_grid = copy.deepcopy(self.grid)
         print(self.grid)
         return self.grid
-
-    def has_unique_solution(self):
+    
+    # uses verifier to check for puzzle uniqueness
+    def has_unique_solution(self): 
         verifier = GridVerifier(copy.deepcopy(self.grid))
 
         return verifier.solve() and verifier.solutions == 1
 
+    # gets a random puzzle by generating a random solution and taking away random cells
+    # each time a cell is set to 0 a uniqueness is performed to ensure that the puzzle still has a unique solution
     def generate_puzzle(self, difficulty=Difficulty.MED):
         self.fill_grid()
         cells = [(r, c) for r in range(9) for c in range(9)]
